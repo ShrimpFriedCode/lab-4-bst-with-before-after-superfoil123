@@ -1,2 +1,2 @@
-# bst-before-after
-Binary Search Trees with getBefore and getAfter methods
+# Lab: Binary Search Trees with getBefore() and getAfter()
+
