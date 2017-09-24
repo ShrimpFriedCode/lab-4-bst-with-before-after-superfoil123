@@ -12,7 +12,7 @@ import java.util.Random;
 public class StudentTest {
 
     @Test
-    /**
+    /*
      * Start with this test. Make appropriate changes to BinarySearchTree.Node.
      */
     public void nodeProperties() {
@@ -50,7 +50,7 @@ public class StudentTest {
     }
 
     @Test
-    /**
+    /*
      * When you're ready to run this test, remove the // from the above line.
      */
     public void insertSmallBST() {
@@ -63,7 +63,7 @@ public class StudentTest {
             n++;
             assertEquals(n, bst.size());
         }
-        /**
+        /*
          *       4
          *     /  \
          *    /    \
@@ -302,11 +302,11 @@ public class StudentTest {
         }
     }
 
-    /**********************************************************************************
-     * Add test cases for insert and remove on a tree with 100 randomly generated keys.
+    /* * ******************************************************************************
+     Add test cases for insert and remove on a tree with 100 randomly generated keys.
      */
 
-    /**********************************************************************************/
+    /* *********************************************************************************/
 
     private <K> int get_height(BinarySearchTree<K>.Node p) {
         if (p == null) return -1;

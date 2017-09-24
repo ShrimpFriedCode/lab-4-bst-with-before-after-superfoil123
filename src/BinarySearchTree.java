@@ -1,5 +1,7 @@
-import java.util.LinkedList;
+import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.function.BiPredicate;
 
 /**
@@ -38,6 +40,7 @@ public class BinarySearchTree<K> implements Tree<K> {
             this.data = data;
             this.left = left;
             this.right = right;
+            height = 0;
         }
 
         /*
@@ -55,75 +58,106 @@ public class BinarySearchTree<K> implements Tree<K> {
             return left == null && right == null;
         }
 
-        /**
-         * TODO
-         * <p>
-         * Performs a local update on the height of this node. Assumes that the
-         * heights in the child nodes are correct. Returns true iff the height
-         * actually changed. This function *must* run in O(1) time.
-         */
+        protected int setHeight(Node n){
+            if (n != null){ //if not null, add 1
+                if(setHeight(n.left) > setHeight(n.right)){ //if  get max of either the left or right, to find the true height
+                    return setHeight(n.left) +1;
+                }
+                else{
+                    return setHeight(n.right) + 1;
+                }
+            }
+            else { //else it DNE, so 0
+                return 0;
+            }
+        }
+
         protected boolean updateHeight() {
-            throw new UnsupportedOperationException();
+            boolean ret = false;
+            int hCheck = setHeight(this) - 1;
+
+            if(this.height != hCheck){
+                ret = true;
+                height =  hCheck;
+            }
+            return ret;
         }
 
-        /**
-         * TODO
-         * <p>
-         * Returns the location of the node containing the inorder predecessor
-         * of this node.
-         */
         public Node getBefore() {
-            throw new UnsupportedOperationException();
+            Node n = this;
+            Node ret = this;
+
+            if(n.left != null){
+                ret = n.left;
+                ret = ret.largest();
+            }
+            else{
+                ret = n.parent;
+                while(ret != null && n == ret.left){
+                    n = ret;
+                    ret = ret.parent;
+                }
+            }
+
+            return ret;
         }
 
-        /**
-         * TODO
-         * <p>
-         * Returns the location of the node containing the inorder successor
-         * of this node.
-         */
         public Node getAfter() {
-            throw new UnsupportedOperationException();
+            Node n = this;
+            Node ret = n;
+
+            if(n.right != null){
+                ret = n.right;
+                ret = ret.smallest();
+            }
+            else {
+                ret = n.parent;
+                while (ret != null && n == ret.right) {
+                    n = ret;
+                    ret = ret.parent;
+                }
+            }
+            return ret;
         }
 
-        /**
-         * TODO
-         * <p>
-         * This method should return the closest ancestor of node q
-         * whose key is less than q's key. It is not necessary to
-         * to perform key comparisons to implement this method.
-         */
         private Node smallerAncestor(Node q) {
-            throw new UnsupportedOperationException();
+            Node ret = q.parent;
+            Node n = q;
+
+            while(ret != null &&  n == ret.left){
+                n = ret;
+                ret = ret.parent;
+            }
+
+            return ret;
         }
 
-        /**
-         * TODO
-         * <p>
-         * This method should return the closest ancestor of node q
-         * whose key is greater than q's key. It is not necessary to
-         * to perform key comparisons to implement this method.
-         */
         private Node greaterAncestor(Node q) {
-            throw new UnsupportedOperationException();
+            Node ret = q.parent;
+            Node n = q;
+
+            while (ret != null && n == ret.right) {
+                n = ret;
+                ret = ret.parent;
+            }
+
+            return ret;
         }
 
-        /*
-         * TODO
-         * This method should return the node in the subtree rooted at 'this'
-         * that has the smallest key.
-         */
         protected Node smallest() {
-            throw new UnsupportedOperationException();
+            Node ret = this;
+            while(ret.left != null){
+                ret = ret.left;
+            }
+            return ret;
         }
 
-        /*
-         * TODO
-         * This method should return the node in the subtree rooted at 'this'
-         * that has the largest key.
-         */
         private Node largest() {
-            throw new UnsupportedOperationException();
+            Node ret = this;
+            while(ret.right != null){
+                ret = ret.right;
+            }
+            return ret;
         }
 
         public String toString() {
@@ -133,7 +167,7 @@ public class BinarySearchTree<K> implements Tree<K> {
     }
 
     protected Node root;
-    protected int numNodes;
+    protected int numNodes = 0;
     protected BiPredicate<K, K> lessThan;
 
     /**
@@ -144,38 +178,55 @@ public class BinarySearchTree<K> implements Tree<K> {
         this.lessThan = lessThan;
     }
 
-    /**
-     * TODO
-     * <p>
-     * Looks up the key in this tree and, if found, returns the
-     * location containing the key.
-     */
+    public Node searchH(Node n, K key){
+
+        if(n == null){
+            return null;
+        }
+        else if(lessThan.test(key, n.get())){
+            return searchH(n.left, key);
+        }
+        else if(lessThan.test(n.get(), key)){
+            return searchH(n.right, key);
+        }
+        else{
+            return n;
+        }
+
+    }
+
     public Node search(K key) {
-        throw new UnsupportedOperationException();
+        return searchH(root, key);
     }
 
     /**
      * Returns the height of this tree. Runs in O(1) time!
      */
     public int height() {
-        return get_height(root);
+
+        if(root == null){
+            return -1;
+        }
+        else {
+            return get_height(root);
+        }
     }
 
-    /**
-     * TODO
-     * The get_height method returns the height of the Node n, which may be null.
-     */
     protected int get_height(Node n) {
-        throw new UnsupportedOperationException();
+        if(n != null){
+            return n.height;
+        }
+        return 0;
     }
 
     /**
-     * TODO
      * <p>
      * Clears all the keys from this tree. Runs in O(1) time!
      */
-    public void clear() {
-        throw new UnsupportedOperationException();
+    public void clear()
+    {
+        numNodes = 0;
+        root = null;
     }
 
     /**
@@ -186,22 +237,52 @@ public class BinarySearchTree<K> implements Tree<K> {
     }
 
     /**
-     * TODO
      * <p>
      * Inserts the given key into this BST, as a leaf, where the path
      * to the leaf is determined by the predicate provided to the tree
-     * at construction time. The parent pointer of the new node and
+     * at construction time.
+     *
+     * The parent pointer of the new node and
      * the heights in all node along the path to the root are adjusted
      * accordingly.
+     *
+     *
      * <p>
      * Note: we assume that all keys are unique. Thus, if the given
      * key is already present in the tree, nothing happens.
      * <p>
      * Returns the location where the insert occurred (i.e., the leaf
      * node containing the key), or null if the key is already present.
+     *
      */
+
+    private Node insertH(Node n, Node p,  K key){
+
+        if(n == null){//if null insert
+           n = new Node(key);
+           n.parent = p;
+           numNodes += 1;
+           n.updateHeight();
+           return n;
+        }
+        else if(lessThan.test(key, n.get())){//if key is less than, go left
+            n.left =  insertH(n.left, n, key);
+            n.updateHeight();
+            return n;
+        }
+        else{//else must be right
+            n.right =  insertH(n.right, n, key);
+            n.updateHeight();
+            return n;
+        }
+    }
+
     public Node insert(K key) {
-        throw new UnsupportedOperationException();
+        if (search(key) != null){
+            return null;
+        }
+        root = insertH(root, root, key);
+        return search(key);
     }
 
         /**
@@ -213,13 +294,49 @@ public class BinarySearchTree<K> implements Tree<K> {
     }
 
     /**
-     * TODO
      * <p>
      * Removes the key from this BST. If the key is not in the tree,
      * nothing happens.
      */
+    public Node removeH(Node n, K key){
+
+        if(n == null){
+            return n;
+        }
+        else if(lessThan.test(key, n.get())){
+            n.left = removeH(n.left, key);
+            return n;
+        }
+        else if(lessThan.test(n.get(), key)){
+            n.right = removeH(n.right, key);
+            return n;
+        }
+        else{
+            if(n.left == null){
+                if(n.right != null) {
+                    n.right.parent = n.parent;
+                }
+                return n.right;
+            }
+            else if(n.right == null){
+                if(n.left != null) {
+                    n.left.parent = n.parent;
+                }
+                return n.left;
+            }
+            else {
+                n.data = n.right.smallest().get();
+                n.right = removeH(n.right, n.data);
+                return n;
+            }
+        }
+    }
+
     public void remove(K key) {
-        throw new UnsupportedOperationException();
+        if(search(key) != null) {
+            root = removeH(root, key);
+            numNodes -= 1;
+        }
     }
 
     /**
@@ -227,8 +344,20 @@ public class BinarySearchTree<K> implements Tree<K> {
      * <p>
      * Returns a sorted list of all the keys in this tree.
      */
+
+    public List<K> listH(Node n){
+        List<K> keys = new ArrayList<K>();
+
+        if(n != null){
+            keys.addAll(listH(n.left));
+            keys.add(n.get());
+            keys.addAll(listH(n.right));
+        }
+        return keys;
+    }
+
     public List<K> keys() {
-        throw new UnsupportedOperationException();
+        return listH(root);
     }
 
     private String toStringInorder(Node p) {
