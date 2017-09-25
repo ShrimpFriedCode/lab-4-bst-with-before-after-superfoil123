@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.function.BiPredicate;
 
 /**
- * TODO: This is your first major task.
  * <p>
  * This class implements a generic unbalanced binary search tree (BST).
  */
@@ -32,7 +31,6 @@ public class BinarySearchTree<K> implements Tree<K> {
         }
 
         /**
-         * TODO
          * <p>
          * Constructs a new node with the given values for fields.
          */
