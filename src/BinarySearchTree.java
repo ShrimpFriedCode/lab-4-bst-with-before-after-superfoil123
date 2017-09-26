@@ -58,11 +58,15 @@ public class BinarySearchTree<K> implements Tree<K> {
 
         protected int setHeight(Node n){
             if (n != null){ //if not null, add 1
-                if(setHeight(n.left) > setHeight(n.right)){ //if  get max of either the left or right, to find the true height
-                    return setHeight(n.left) +1;
+
+                int l = setHeight(n.left);
+                int r = setHeight(n.right);
+
+                if(l > r){ //if  get max of either the left or right, to find the true height
+                    return l +1;
                 }
                 else{
-                    return setHeight(n.right) + 1;
+                    return r + 1;
                 }
             }
             else { //else it DNE, so 0
@@ -96,7 +100,6 @@ public class BinarySearchTree<K> implements Tree<K> {
                     ret = ret.parent;
                 }
             }
-
             return ret;
         }
 
@@ -263,22 +266,18 @@ public class BinarySearchTree<K> implements Tree<K> {
            n.updateHeight();
            return n;
         }
-        else if(lessThan.test(key, n.get())){//if key is less than, go left
+
+        if(lessThan.test(key, n.get())){//if key is less than, go left
             n.left =  insertH(n.left, n, key);
-            n.updateHeight();
-            return n;
         }
-        else{//else must be right
+        else if(lessThan.test(n.get(), key)){//else must be right
             n.right =  insertH(n.right, n, key);
-            n.updateHeight();
-            return n;
         }
+        n.updateHeight();
+        return n;
     }
 
     public Node insert(K key) {
-        if (search(key) != null){
-            return null;
-        }
         root = insertH(root, root, key);
         return search(key);
     }
